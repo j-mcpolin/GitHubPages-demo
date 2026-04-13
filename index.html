@@ -5,37 +5,5 @@
 <h1 id="message">Hello world</h1>
 <button onclick="changeMessage()">Click Me</button>
 
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyC4FUJwe0MHWnG_NNTRSTzZpjFw1FwpHfk",
-      authDomain: "githubpages-demo.firebaseapp.com",
-      projectId: "githubpages-demo",
-      storageBucket: "githubpages-demo.firebasestorage.app",
-      messagingSenderId: "955386076992",
-      appId: "1:955386076992:web:5b8cb07ec8115e189ce4a5"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-
-    const messageEl = document.getElementById("message");
-    const messageRef = doc(db, "demo", "message");
-
-    onSnapshot(messageRef, (docSnap) => {
-      if (docSnap.exists()) {
-        messageEl.textContent = docSnap.data().text;
-      }
-    });
-
-    window.changeMessage = async function () {
-      await setDoc(messageRef, {
-        text: "Clicked at " + new Date().toLocaleTimeString()
-      });
-    };
-</script>
-
 </body>
 </html>
