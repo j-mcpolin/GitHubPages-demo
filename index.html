@@ -1,13 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Booking System</title>
+</head>
 <body>
 
-<h1 id="message">Hello world</h1>
-<button onclick="changeMessage()">Click Me</button>
+<h1>Book an Appointment</h1>
+
+<div id="slots"></div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { getFirestore, collection, onSnapshot, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyC4FUJwe0MHWnG_NNTRSTzZpjFw1FwpHfk",
@@ -21,20 +26,49 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    const messageEl = document.getElementById("message");
-    const messageRef = doc(db, "demo", "message");
+    const slotsDiv = document.getElementById("slots");
+    const slotsRef = collection(db, "slots");
 
-    onSnapshot(messageRef, (docSnap) => {
-      if (docSnap.exists()) {
-        messageEl.textContent = docSnap.data().text;
-      }
+    // DISPLAY ALL SLOTS
+    onSnapshot(slotsRef, (snapshot) => {
+      slotsDiv.innerHTML = "";
+
+      snapshot.forEach((docSnap) => {
+        const data = docSnap.data();
+
+        const div = document.createElement("div");
+        div.style.marginBottom = "10px";
+
+        div.textContent = data.time + " with " + data.guidance + " ";
+
+        if (!data.status) {
+          const btn = document.createElement("button");
+          btn.textContent = "Book";
+          btn.onclick = () => bookSlot(docSnap.id);
+          div.appendChild(btn);
+        } else {
+          const taken = document.createElement("span");
+          taken.textContent = "(BOOKED by " + data.student + ")";
+          div.appendChild(taken);
+        }
+
+        slotsDiv.appendChild(div);
+      });
     });
 
-    window.changeMessage = async function () {
-      await setDoc(messageRef, {
-        text: "Clicked at " + new Date().toLocaleTimeString()
+    // BOOK SLOT
+    window.bookSlot = async function (id) {
+      const name = prompt("Enter your name:");
+      if (!name) return;
+
+      const slotRef = doc(db, "slots", id);
+
+      await updateDoc(slotRef, {
+        status: true,
+        student: name
       });
     };
+
 </script>
 
 </body>
