@@ -26,8 +26,8 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    const slotsDiv = document.getElementById("slots");
-    const slotsRef = collection(db, "slots");
+    const slotsDiv = document.getElementById("time_slots");
+    const slotsRef = collection(db, "time_slots");
 
     // DISPLAY ALL SLOTS
     onSnapshot(slotsRef, (snapshot) => {
@@ -61,7 +61,7 @@
       const name = prompt("Enter your name:");
       if (!name) return;
 
-      const slotRef = doc(db, "slots", id);
+      const slotRef = doc(db, "time_slots", id);
 
       await updateDoc(slotRef, {
         status: true,
